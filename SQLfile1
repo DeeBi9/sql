@@ -1,0 +1,65 @@
+-- 1. Create Tables with Relationships
+CREATE TABLE Department (
+    Dept_ID INT PRIMARY KEY,
+    Dept_Name VARCHAR(50)
+);
+
+CREATE TABLE Professor (
+    Prof_ID INT PRIMARY KEY,
+    Prof_Name VARCHAR(50),
+    Contact_No VARCHAR(15),
+    Office_No INT,
+    Dept_ID INT,
+    FOREIGN KEY (Dept_ID) REFERENCES Department(Dept_ID)
+);
+
+CREATE TABLE Course (
+    Course_ID INT PRIMARY KEY,
+    Course_Name VARCHAR(50),
+    Dept_ID INT,
+    FOREIGN KEY (Dept_ID) REFERENCES Department(Dept_ID)
+);
+
+CREATE TABLE Student (
+    Student_ID INT PRIMARY KEY,
+    Full_Name VARCHAR(50),
+    Course_ID INT,
+    FOREIGN KEY (Course_ID) REFERENCES Course(Course_ID)
+);
+
+CREATE TABLE Registration (
+    Registration_ID INT PRIMARY KEY,
+    Student_ID INT,
+    Course_ID INT,
+    Prof_ID INT,
+    Marks INT,
+    FOREIGN KEY (Student_ID) REFERENCES Student(Student_ID),
+    FOREIGN KEY (Course_ID) REFERENCES Course(Course_ID),
+    FOREIGN KEY (Prof_ID) REFERENCES Professor(Prof_ID)
+);
+
+-- 2. Display Total and Average Marks
+SELECT Student_ID, SUM(Marks) AS Total_Marks, AVG(Marks) AS Average_Marks
+FROM Registration
+GROUP BY Student_ID;
+
+-- 3. Print Professors with Prof_ID between 2001 and 2006
+SELECT Prof_Name, Contact_No
+FROM Professor
+WHERE Prof_ID BETWEEN 2001 AND 2006;
+
+-- 4. List Students with Full Name of Exactly Five Characters
+SELECT * 
+FROM Student
+WHERE LENGTH(Full_Name) = 5;
+
+-- 5. Check if All Departments are in the Same Building
+SELECT Building
+FROM Department
+GROUP BY Building
+HAVING COUNT(DISTINCT Dept_ID) = (SELECT COUNT(*) FROM Department);
+
+-- 6. Show Courses that Start with the Prefix 'phy'
+SELECT * 
+FROM Course
+WHERE Course_Name LIKE 'phy%';
