@@ -1,0 +1,91 @@
+-- 1. Create Tables with Relationships
+CREATE TABLE Department (
+    Dept_ID INT PRIMARY KEY,
+    Dept_Name VARCHAR(50),
+    Building VARCHAR(50)
+);
+
+CREATE TABLE Professor (
+    Prof_ID INT PRIMARY KEY,
+    Prof_Name VARCHAR(50),
+    Contact_No VARCHAR(15),
+    Office_No INT,
+    Dept_ID INT,
+    FOREIGN KEY (Dept_ID) REFERENCES Department(Dept_ID)
+);
+
+CREATE TABLE Course (
+    Course_ID INT PRIMARY KEY,
+    Course_Name VARCHAR(50),
+    Dept_ID INT,
+    FOREIGN KEY (Dept_ID) REFERENCES Department(Dept_ID)
+);
+
+CREATE TABLE Student (
+    Student_ID INT PRIMARY KEY,
+    Full_Name VARCHAR(50),
+    Course_ID INT,
+    FOREIGN KEY (Course_ID) REFERENCES Course(Course_ID)
+);
+
+CREATE TABLE Registration (
+    Registration_ID INT PRIMARY KEY,
+    Student_ID INT,
+    Course_ID INT,
+    Prof_ID INT,
+    Marks INT,
+    FOREIGN KEY (Student_ID) REFERENCES Student(Student_ID),
+    FOREIGN KEY (Course_ID) REFERENCES Course(Course_ID),
+    FOREIGN KEY (Prof_ID) REFERENCES Professor(Prof_ID)
+);
+
+-- Insert Demo Data
+INSERT INTO Department VALUES (1, 'Computer Science', 'Building A');
+INSERT INTO Department VALUES (2, 'Physics', 'Building A');
+INSERT INTO Department VALUES (3, 'Mathematics', 'Building B');
+
+INSERT INTO Professor VALUES (2001, 'Dr. Smith', '1234567890', 101, 1);
+INSERT INTO Professor VALUES (2002, 'Dr. Allen', '0987654321', 102, 2);
+INSERT INTO Professor VALUES (2003, 'Dr. John', '5555555555', 103, 3);
+
+INSERT INTO Course VALUES (101, 'Data Structures', 1);
+INSERT INTO Course VALUES (102, 'Algorithms', 1);
+INSERT INTO Course VALUES (201, 'Physics 101', 2);
+INSERT INTO Course VALUES (202, 'Physical Chemistry', 2);
+
+INSERT INTO Student VALUES (1, 'Alice', 101);
+INSERT INTO Student VALUES (2, 'Bob', 102);
+INSERT INTO Student VALUES (3, 'Eve', 201);
+INSERT INTO Student VALUES (4, 'Anna', 202);
+
+INSERT INTO Registration VALUES (1, 1, 101, 2001, 85);
+INSERT INTO Registration VALUES (2, 2, 102, 2001, 90);
+INSERT INTO Registration VALUES (3, 3, 201, 2002, 75);
+INSERT INTO Registration VALUES (4, 4, 202, 2002, 88);
+
+-- 2. Display Total and Average Marks
+SELECT Student_ID, SUM(Marks) AS Total_Marks, AVG(Marks) AS Average_Marks
+FROM Registration
+GROUP BY Student_ID;
+
+-- 3. Print Professors with Prof_ID between 2001 and 2006
+SELECT Prof_Name, Contact_No
+FROM Professor
+WHERE Prof_ID BETWEEN 2001 AND 2006;
+
+-- 4. List Students with Full Name of Exactly Five Characters
+SELECT * 
+FROM Student
+WHERE LENGTH(Full_Name) = 5;
+
+-- 5. Check if All Departments are in the Same Building
+SELECT CASE 
+    WHEN COUNT(DISTINCT Building) = 1 THEN 'All departments are in the same building'
+    ELSE 'Departments are in different buildings'
+END AS Building_Check
+FROM Department;
+
+-- 6. Show Courses that Start with the Prefix 'phy'
+SELECT * 
+FROM Course
+WHERE Course_Name LIKE 'phy%';
